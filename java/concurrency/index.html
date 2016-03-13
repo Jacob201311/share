@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="../../../css/reveal.css">
+        <link rel="stylesheet" href="../../../css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="../../../lib/css/zenburn.css">
+
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? '../../../css/print/pdf.css' : '../../../css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+
+        <title>Concurrency</title>
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section id="agenda">
+                    <section id="agenda_1">
+                        <h1>Agenda</h1>
+                        <ul>
+                            <li>Java并发编程基础</li>
+                            <li>Java的🔒</li>
+                            <li>没想好2</li>
+                            <li>没想好3</li>
+                        </ul>
+                    </section>
+                    <section  id="agenda_2">
+                        <ul>
+                            <li><a href="#/process_thread">进程与线程</a></li>
+                            <li><a href="#/multi_thread">线程的状态</a></li>
+                            <li><a href="#/thread_lifecycle">线程的启动和关闭</a></li>
+                            <li><a href="#/thread_communication">线程的通信</a></li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section id="process_thread">
+                    <h2>进程与线程</h2>
+                    <section id="process_thread_1" data-markdown>
+                        <script type="text/template">
+                            ### 进程(Process)
+                            + 一个进程即程序运行的实例 <!-- .element: class="fragment" data-fragment-index="1" -->
+                            <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                                &ldquo;a process is an instance of a computer program that is being executed. It contains the program code and its current activity. Depending on the operating system (OS), a process may be made up of multiple threads of execution that execute instructions concurrently.&rdquo;
+                            </blockquote> <!-- .element: class="fragment grow" data-fragment-index="2" -->
+                        </script>
+                    </section>
+                    <section id="process_thread_2" data-markdown>
+                        <script type="text/template">
+                            ### 线程(Thread)
+                            + CPU调度的最小单元 <!-- .element: class="fragment" data-fragment-index="1" -->
+                            + 拥有各自计数器，堆栈和局部变量，可以访问共享内存 <!-- .element: class="fragment" data-fragment-index="2" -->
+                        </script>
+                    </section>
+
+                    <section id="process_thread_3">
+                        <p>&nbsp;</p>
+                        <p class="fragment">简单运行一个Java程序</p>
+                        <pre class="fragment"><code class="hljs" data-trim>
+ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+Stream&lt;ThreadInfo&gt; threadInfoStream = Arrays.stream(threadMXBean.dumpAllThreads(false, false));
+threadInfoStream.forEach(threadInfo -> {
+  System.out.println(
+      String.format("id:[%s] name:%s state:%s", 
+          threadInfo.getThreadId(), 
+          threadInfo.getThreadName(),
+          threadInfo.getThreadState()));
+  });
+                        </code></pre>
+                        <img class="fragment" src="proecss_thread_3_1_javapid.png">
+                        <img class="fragment" src="process_thread_3_2_threadinfo.png">
+                    </section>
+
+                </section>
+
+                <section id="multi_thread">
+                    <h2>线程的理解和使用</h2>
+
+                    <section id="multi_thread_1">
+                        <h3>java中问什么需要使用到多线程?</h3>
+                        <ul class="fragment">
+                            <li>多核处理器的利用</li>
+                            <li>高效的执行</li>
+                            <li>拥有很好的并发编成模型</li>
+                        </ul>
+                    </section>
+
+                    <section id="multi_thread_2">
+                        <h3>线程的优先级</h3>
+                        <pre class="fragment"><code class="hljs" data-trim data-noescape>
+public class Eg2Priority {
+
+  private static volatile boolean notStart = true;
+  private static volatile boolean notEnd = true;
+  
+  public static class Job implements Runnable {
+
+    private int priority;
+    private int countNum;
+    
+    public Job(int priority) {
+      this.priority = priority;
+    }
+
+    @Override
+    public void run() {
+      while (notStart) {
+        Thread.yield();
+      }
+      while (notEnd) {
+        Thread.yield();
+        countNum++;
+      }
+    }
+  }
+  
+  public static void main(String[] args) throws InterruptedException {
+    List&lt;Job&gt; jobs = new ArrayList&lt;&gt;();
+
+    IntStream.range(0, 4).forEach(i -> {
+      int priority = i < 2 ? Thread.MIN_PRIORITY : Thread.MAX_PRIORITY;
+      Job job = new Job(priority);
+      jobs.add(job);
+      Thread thread = new Thread(job, String.format("Thread: %d", i));
+      thread.setPriority(priority);
+      thread.start();
+    });
+    
+    <mark>Eg1MultiThread.printJvmThreadsInfo();</mark>
+
+    notStart = false;
+    TimeUnit.SECONDS.sleep(10); // 使用jstack查看线程状态
+    notEnd = false;
+
+    jobs.stream().forEach(j -> System.out.println(String.format("Job priority :%d, and count: %d", j.priority, j.countNum)));
+  }
+}
+
+                        </code></pre>
+
+                    </section>
+                    <section id="multi_thread_3">
+                        <p>&nbsp;</p>
+                        <h3>线程的优先级</h3>
+                        <img src="multi_thread_3_1_jstack.png" height="300">
+                        <img src="multi_thread_3_2_console.png" height="100">
+                        <p class="fragment highlight-red" style="font-size: 20px">在给java程序设置线程的优先级时，可能会被OS忽略</p>
+                    </section>
+
+                    <section id="multi_thread_4">
+                        <h3>线程的状态</h3>
+                        <table>
+                            <thead><tr><th>STATE</th><th>DESC</th></tr></thead>
+                            <tbody>
+                                <tr><td>NEW</td><td>初始状态, 线程被构建</td></tr>
+                                <tr><td>RUNNABLE</td><td>运行状态, OS的就绪和运行</td></tr>
+                                <tr><td>BLOCKED</td><td>阻塞状态</td></tr>
+                                <tr><td>WATING</td><td>等待状态, 等待其他线程通知或中断</td></tr>
+                                <tr><td>TIMED_WATING</td><td>超时等待状态, 指定时间内</td></tr>
+                                <tr><td>TERMINATED</td><td>终止状态</td></tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="multi_thread_5">
+                        <h3>线程的状态</h3>
+                        <pre><code data-trim>
+                              public class Eg3ThreadState {
+  public static void main(String[] args) {
+    new Thread(new TimedWating(), "TIMED_WAITING").start();
+    new Thread(new Waiting(), "WAITING").start();
+    new Thread(new Blocked(), "BLOCKED-1").start();
+    new Thread(new Blocked(), "BLOCKED-2").start();
+  }
+
+  public static void sleep(int second) {
+    try {
+      TimeUnit.SECONDS.sleep(second);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+class TimedWating implements Runnable {
+  @Override
+  public void run() {
+    while (true) {
+      Eg3ThreadState.sleep(30);
+    }
+  }
+}
+
+
+class Waiting implements Runnable {
+  @Override
+  public void run() {
+    while (true) {
+      synchronized (Waiting.class) {
+        try {
+          Waiting.class.wait();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+}
+
+class Blocked implements Runnable {
+  @Override
+  public void run() {
+    synchronized (Blocked.class) {
+      while (true) {
+        Eg3ThreadState.sleep(100);
+      }
+    }
+  }
+}
+
+                        </code></pre>
+                    </section>
+
+                    <section id="multi_thread_6">
+                        <p>&nbsp;</p>
+                        <h3>线程的状态</h3>
+                        <img src="multi_thread_6_1_state.png" style="height: 520px">
+                    </section>
+
+                    <section id="multi_thread_7">
+                        <p>&nbsp;</p>
+                        <h3>线程的状态</h3>
+                        <img src="multi_thread_7_1_statetranslate.png" style="height: 520px">
+                    </section>
+
+                </section>
+
+
+
+            </div>
+
+        </div>
+
+        <script src="../../../lib/js/head.min.js"></script>
+        <script src="../../../js/reveal.js"></script>
+
+        <script>
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                transition: 'zoom', // none/fade/slide/convex/concave/zoom
+
+                dependencies: [
+                    { src: '../../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: '../../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../../../plugin/zoom-js/zoom.js', async: true },
+                    { src: '../../../plugin/notes/notes.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>
