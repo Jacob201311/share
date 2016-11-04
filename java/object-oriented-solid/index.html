@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="../../../css/reveal.css">
+        <link rel="stylesheet" href="../../../css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="../../../lib/css/zenburn.css">
+
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? '../../../css/print/pdf.css' : '../../../css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+
+        <title>Concurrency</title>
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+
+                <section id="begin">
+                    Waiting...
+                </section>
+
+                <section id="introduction">
+
+                    <section id="introduction-1">
+                        <h2>Mass SYS</h2>
+                        <img src="Figure1.jpg"/>
+                    </section>
+
+                    <section id="introduction-2">
+                        <h2>Organized SYS</h2>
+                        <img src="Figure19.tif"/>
+                    </section>
+
+                    <section id="introduction-3">
+                        <h1>WHY</h1>
+                        <h1>HOW</h1>
+                    </section>
+
+                    <section id="introduction-4" data-markdown>
+                        <script type="text/template">
+                             ## DESIGN
+                             + <strong class="fragment highlight-red">Low</strong> Couple 
+                             + <strong class="fragment highlight-red">Hight</strong> Cohesion 
+                             + <strong class="fragment highlight-red">Strong</strong> Encapsulation 
+                        </script>
+                    </section>
+
+                    <section id="introduction-5" data-markdown>
+                        <script type="text/template">
+                            # Purpose
+                            ## Reuse <!-- .element: class="fragment" data-fragment-index="1" -->
+                            + Code <!-- .element: class="fragment" data-fragment-index="2" -->
+                            + Protocle <!-- .element: class="fragment" data-fragment-index="3" -->
+                        </script>
+                    </section>
+
+                 </section>
+
+                <section id="agenda">
+                    <h1>Agenda</h1>
+                    <section id="agenda-1">
+                        <h2>S.O.L.I.D</h2>
+                    </section>
+
+                    <section id="agenda-2" data-markdown>
+                        <script type="text/template">
+                            ## S.O.L.I.D
+                            + S – Single-responsiblity principle <!-- .element: class="fragment" data-fragment-index="1" -->
+                            + O – Open-closed principle <!-- .element: class="fragment" data-fragment-index="2" -->
+                            + L – Liskov substitution principle <!-- .element: class="fragment" data-fragment-index="3" -->
+                            + I – Interface segregation principle <!-- .element: class="fragment" data-fragment-index="4" -->
+                            + D – Dependency Inversion Principle <!-- .element: class="fragment" data-fragment-index="5" -->
+                        </script>
+                    </section>
+                    
+                </section>
+
+                 <section id="srp" data-markdown>
+                    <script type="text/template">
+                        ## Single-responsiblity principle
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;classes, modules, etc should have one and only one reason to change. This helps to drive cohesion into a system and can be used as a measure of coupling as well.&rdquo;
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="1" -->
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;A class should have only one reason to change.&rdquo;
+                            ---- Robert C. Martin
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="2" -->
+                    </script>
+                 </section>
+
+                <section id="ocp" data-markdown>
+                    <script type="text/template">
+                        ## Open-closed principle
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;indicates how a system can be extended by modifying the behavior of individual classes or modules, without having to modify the class or module itself. This helps you create well-encapsulated, highly cohesive systems.&rdquo;
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="1" -->
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;You should be able to extend a classes behavior, without modifying it.&rdquo;
+                            ---- Robert C. Martin
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="2" -->
+                    </script>
+                 </section>
+
+                <section id="lsp" data-markdown>
+                    <script type="text/template">
+                        ## Liskov substitution principle
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;helps with encapsulation and cohesion. This principle says that you should not violate the intent or semantics of the abstraction that you are inheriting from or implementing.&rdquo;
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="1" -->
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;Derived classes must be substitutable for their base classes.&rdquo;
+                            ---- Robert C. Martin
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="2" -->
+                        <p>Tip: is-a</p><!-- .element: class="fragment" data-fragment-index="3" -->
+                    </script>
+                 </section>
+
+                <section id="isp" data-markdown>
+                    <script type="text/template">
+                        ## Interface segregation principle
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;helps to make your system easy to understand and use. It says that you should not force a client to depend on an interface (API) that the client does not need. This helps you develop well-encapsulated, cohesive set of parts.&rdquo;
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="1" -->
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;Make fine grained interfaces that are client specific.&rdquo;
+                            ---- Robert C. Martin
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="2" -->
+                    </script>
+                 </section>
+
+
+                <section id="dip" data-markdown>
+                    <script type="text/template">
+                        ## Interface segregation principle
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;helps you to understand how to correctly bind your system together. It tells you to have your implementation detail depend on the higher-level policy abstractions, and not the other way around. This helps you to move toward a system that is coupled correctly, and directly influences that system’s encapsulation and cohesion.&rdquo;
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="1" -->
+                        <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                            &ldquo;Depend on abstractions, not on concretions.&rdquo;
+                            ---- Robert C. Martin
+                        </blockquote><!-- .element: class="fragment" data-fragment-index="2" -->
+                    </script>
+                 </section>
+
+                 <section id="conclusion" data-markdown>
+                    <script type="text/template">
+                        ### Top-down Design
+                        ### Interface Oriented, Protocol Resued
+                        ### Use Base Type In Protocol
+                    </script>
+                 </section>
+
+                 <section id="example">
+                    <h2>Example</h2>
+                    
+                    <section id="example-1">
+                        <p>Web 3 Level</p>
+                        <img src="web-3.png" style="height: 520px"/>
+                    </section>
+
+                    <section id="example-2">
+                        <p>Validation Code</p>
+                        <img src="vc_code.png" style="height: 520px"/>
+                    </section>
+                    
+                 </section>
+
+                 <section id="reference">
+                    http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod
+                 </section>
+
+
+
+            </div>
+        </div>
+
+        <script src="../../../lib/js/head.min.js"></script>
+        <script src="../../../js/reveal.js"></script>
+
+        <script>
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                transition: 'zoom', // none/fade/slide/convex/concave/zoom
+
+                dependencies: [
+                    { src: '../../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: '../../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: '../../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../../../plugin/zoom-js/zoom.js', async: true },
+                    { src: '../../../plugin/notes/notes.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>

@@ -34,7 +34,8 @@
                         <h1>Agenda</h1>
                         <ul>
                             <li>Java并发编程基础</li>
-                            <li>Java的🔒</li>
+                            <li>Java共享内存模型</li>
+                            <li>Java的🔒API</li>
                             <li>没想好2</li>
                             <li>没想好3</li>
                         </ul>
@@ -44,6 +45,7 @@
                             <li><a href="#/process_thread">进程与线程</a></li>
                             <li><a href="#/multi_thread">线程的状态</a></li>
                             <li><a href="#/thread_lifecycle">线程的启动和关闭</a></li>
+                            <li><a href="#/thread_two_keywords">两个关键字</a></li>
                             <li><a href="#/thread_communication">线程的通信</a></li>
                         </ul>
                     </section>
@@ -246,6 +248,309 @@ class Blocked implements Runnable {
                         <p>&nbsp;</p>
                         <h3>线程的状态</h3>
                         <img src="multi_thread_7_1_statetranslate.png" style="height: 520px">
+                    </section>
+
+                    <section id="multi_thread_8">
+                        <h3>deamon线程</h3>
+                        <pre><code data-trim>
+        Thread thread = new Thread(() -> {
+  try {
+    System.out.println("DaemonThread run");
+    Eg3ThreadState.sleep(5);
+  } finally {
+    System.out.println("DaemonThread finally run");
+  }
+} , "DeamenThread");
+thread.setDaemon(true); // Marks this thread as either a daemon thread or
+                        // a user thread. The Java Virtual Machine exits when the only threads
+                        // running are all daemon threads.
+thread.start();
+Eg3ThreadState.sleep(6);
+                        </code></pre>
+                        <p class="fragment">deamon默默运行在后台,且最终不会执行finnally</p>
+                    </section>
+
+                </section>
+
+                 <section id="thread_init_interrupt">
+                    <h2>线程的启动和关闭</h2>
+                    <section id="thread_init_interrupt_1" data-markdown>
+                        <script type="text/template">
+                            ### 线程初始化
+                            + <p class="fragment">Thread.init()</p>
+                            + <p class="fragment">Thread.start()</p>
+                        </script>
+                    </section>
+
+                    <section id="thread_init_interrupt_3" data-markdown>
+                        <script type="text/template">
+                            ### 暂停,恢复和停止
+                            + <p class="fragment">suspend()</p>
+                            + <p class="fragment">resume()</p>
+                            + <p class="fragment">stop()</p>
+                        </script>
+                    </section>
+
+                    <section id="thread_init_interrupt_2" data-markdown>
+                        <script type="text/template">
+                            ### 如何关闭一个线程
+                            + <p class="fragment">使用线程方法</p>
+                            + <p class="fragment">使用interrupt中断</p>
+                        </script>
+                    </section>
+                    
+                </section>
+
+                <section id="part1" data-markdown>
+                    <script type="text/template">
+                        <h2>前情回顾</h2>
+                        + 1.线程初始化
+                        + 2.线程的优先级(可能被OS的覆盖)
+                        + 3.线程的启动和关闭(interrupt中断信号关闭)
+                        + 4.线程的状态(初始化,运行,阻塞,等待，超时等待,终止)
+                        + 5.deamon线程
+                        + 6.工具(jps, jstack)
+                    </script>
+                </section>
+
+                <section id="jmm">
+                    <section id="jmm_1" data-markdown>
+                         <script type="text/template">
+                            ## happens-before
+                            <blockquote calss="fragment grow" data-fragment-index="2" cite="https://en.wikipedia.org/wiki/Process_(computing)" style="font-size: 20px;">
+                                &ldquo;first is visable to and ordered before second&rdquo;
+                            </blockquote> 
+                            + 程序顺序规则： 一个线程中的每个操作， happens- before 于 该 线程 中的 任意 后续 操作。 
+                            + 监视器 锁 规则： 对 一个 锁 的 解 锁， happens- before 于 随后 对 这个 锁 的 加锁。 
+                            + volatile 变量 规则： 对一个 volatile 域 的 写， happens- before 于 任意 后续 对 这个 volatile 域 的 读。 
+                            + 传递性： 如果 A happens- before B， 且 B happens- before C， 那么 A happens- before C。
+                        </script>
+                    </section>
+                </section>
+
+
+                <section id="thread_two_keywords">
+                    <h2>volatile and synchronized</h2>
+                    <section id="thread_two_keywords_1" data-markdown>
+                        <script type="text/template">
+                            ## volatile
+                            + 对变量的写必须刷入到共享内存
+                            + 对变量的读必须从共享内存获取
+
+                            volatile自身
+                            + 可见性
+                            + 原子性
+                        </script>
+                    </section>
+
+                    <section id="thread_two_keywords_1.5" >
+                        <pre><code>
+volatile long var = 0L; // 使用 volatile 声明 64 位 的 long 型 变量 
+public void set( long l) { 
+    var = l; // 单个 volatile 变量 的 写 
+} 
+public void getAndIncrement () { 
+    var++; // 复合（ 多个） volatile 变量 的 读/ 写 
+} 
+public long get() { 
+    return var; // 单个 volatile 变量 的 读 
+}
+                        </code></pre>
+                    </section>
+
+                    <section id="thread_two_keywords_2" data-markdown>
+                        <script type="text/template">
+                            ## synchronized
+                            修饰方法和同步块，保证每次只有一个线程执行代码块
+                            + 普通同步方法,锁当前实例对象
+                            + 静态同步方法,锁当前类的Class对象
+                            + 代码块, ()内的实例对象
+                        </script>
+                    </section>
+
+                    <section id="thread_two_keywords_3" data-markdown>
+                        <script type="text/template">
+                            ## 使用javap查看字节码
+                            <pre><code data-trim>
+public class Eg009Syncronized {
+
+  public static void main(String[] args) {
+    // 1. Class加锁
+    synchronized (Eg009Syncronized.class) {
+    }
+    // 2. 同步方法
+    method();
+  }
+
+  public static synchronized void method() {
+    
+  }
+}
+                            </code></pre>
+                        </script>
+                    </section>
+
+                    <section id="thread_two_keywords_4" data-markdown>
+                        <script type="text/template">
+                            ## 使用javap查看字节码
+                            <pre><code data-trim>
+public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: ldc           #1                  // class com/jacob/share/concurrency/fundation/Eg009Syncronized
+         2: dup
+         3: monitorenter
+         4: monitorexit
+         5: invokestatic  #16                 // Method method:()V
+         8: return
+      LineNumberTable:
+        line 12: 0
+        line 15: 5
+        line 16: 8
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       9     0  args   [Ljava/lang/String;
+
+  public static synchronized void method();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED
+    Code:
+      stack=0, locals=0, args_size=0
+         0: return
+      LineNumberTable:
+        line 20: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+}
+                            </code></pre>
+                        </script>
+                    </section>
+
+                    <section id="thread_two_keywords_5" data-markdown>
+                        <script type="text/template">
+                            ## 对象的监视器
+                            + 任意一个对象都拥有自己的监视器
+                            + 线程执行到monitorenter时，尝试获取该监视器,及尝试获取对象的锁
+                            + 代码块, ()内的实例对象
+                        </script>
+                    </section>
+
+                    <section id="thread_two_keywords_6" data-markdown>
+                        <p>&nbsp;</p>
+                        <script type="text/template">
+                            ## 多线程访问一个加锁的对象流程
+                            <img src="thread_two_keywords_6_1.png" style="height: 360px">
+                        </script>
+                    </section>
+                </section>
+
+                <section id="thread_communication">
+                    <h2>线程间的通信</h2>
+                    <section id="thread_communication_1">
+                        问题: 如果一个线程改了一值，另外的线程如何去感知到变化并且进行相关操作?
+                    </section>
+
+                    <section id="thread_communication_2" data-markdown>
+                        <script type="text/template">
+                            ## 等待/通知
+                            <pre><code class="hljs" data-trim data-noescape>
+java.lang.Object
+java.lang.Object.Object()
+java.lang.Object.registerNatives()
+java.lang.Object.getClass()
+java.lang.Object.hashCode()
+java.lang.Object.equals(Object)
+java.lang.Object.clone()
+java.lang.Object.toString()
+<mark>java.lang.Object.notify() // 通知对象上的任一线程
+java.lang.Object.notifyAll() // 通知对象上的所有线程
+java.lang.Object.wait(long) // 线程进入TIMEDWAITING,
+java.lang.Object.wait(long, int) // 时间力度
+java.lang.Object.wait() // 线程进入WAITING, </mark>
+java.lang.Object.finalize()
+                            </code></pre>
+
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_3" data-markdown>
+                        <script type="text/template">
+                            ## 等待/通知
+                            ### demo演示
+                            注意:
+                            + 正确同步, 几个方法都需得到对象的锁
+                            + wait()调用后，会进入等待队列
+                            + 处于等待的线程被唤醒后并得到锁才能运行
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_4">
+                        <img src="thread_communication_4_1.png" style="height: 520px">
+                    </section>
+
+                     <section id="thread_communication_5" data-markdown>
+                        <script type="text/template">
+                            ### 等待/通知
+                            #### 等待(消费者)
+                            1. 先要获取对象的锁
+                            2. 条件不满足，wait()
+                            3. 条件满足，满足后执行
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_6" data-markdown>
+                        <script type="text/template">
+                            ### 等待/通知
+                            #### 通知(生产者)
+                            1. 先要获取对象的锁
+                            2. 改变条件值
+                            3. notify()
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_7" data-markdown>
+                        <script type="text/template">
+                            ### 等待/通知
+                            #### Thread.join()
+                            1. 示例
+                            2. 源码
+                            <pre><code class="hljs" data-trim data-noescape>
+while (isAlive()) {
+    wait(0);
+}
+                            </code></pre>
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_8" data-markdown>
+                        <script type="text/template">
+                            ### 等待/通知
+                            #### ThreadLocal
+                            1. ThreadLocal<T>变量与当前调用的线程绑定
+                            2. ThreadLocal<T>变量只对当前线程有效
+                        </script>
+                    </section>
+
+                    <section id="thread_communication_9" data-markdown>
+                        <script type="text/template">
+                            #### ThreadLocal
+                            1. ThreadLocal<T>变量与当前调用的线程绑定
+                            2. ThreadLocal<T>变量只对当前线程有效
+                            <pre><code>
+public void set(T value) {
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+    }
+                            </code></pre>
+                            3. CCT.java
+
+                        </script>
                     </section>
 
                 </section>
